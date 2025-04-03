@@ -1,3 +1,23 @@
+/*Công ty ABC cần xây dựng một ứng dụng quản lý nhân sự và tính lương cho nhân viên như sau:
+
+1. Quản lý thông tin về nhân viên : Họ tên, ngày sinh, địa chỉ.
+2. Tính tiền lương cho nhân viên.
+Hiện công ty có 3 loại nhân viên và cách tính lương cho từng loại như sau:
+3. Nhân viên sản xuất: số sản phẩm x 20 000 đ.
+4. Nhân viên công nhật: số ngày công x 50 000đ.
+5. Nhân viên quản lý: lương cơ bản x hệ số lương.
+- Yêu cầu: Viết chương trình quản lý và tính tổng lương các nhân viên của công ty ABC.
+o Quản lý:
+Nhập vào một nhân viên mới (có 3 loại nhân viên).
+Xuất thông tin một nhân viên ra màn hình.
+Tính tiền lương cho từng loại nhân viên.
+Nhập vào một danh sách các nhân viên.
+Xuất thông tin danh sách nhân viên của công ty.
+Thêm một nhân viên mới vào danh sách nhân viên của công ty(nhân viên mới có thể là 1 trong 3 loại nhân viên của công ty).
+o Lương:
+Tính tổng lương của các nhân viên trong công ty.
+Tìm nhân viên có lương cao nhất.
+Tìm nhân viên có lương thấp nhất.*/
 using System;
 
 namespace Excercise3
