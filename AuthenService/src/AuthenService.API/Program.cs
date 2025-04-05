@@ -1,19 +1,21 @@
 
 using AuthenService.Application.Services;
-using AuthenService.Infrastructure.Persistence;
-using AuthenService.Shared.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using AuthenService.Infrastructure.Persistence;
+using AuthenService.Domain.Interfaces;
+
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AuthenService.Infrastructure.Repositories;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);    
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-byte[] secretKey = JwtSecretKeyGenerator.GenerateSecretKey();
+var secretKey = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? string.Empty); 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -29,6 +31,7 @@ builder.Services
         };
     });
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();

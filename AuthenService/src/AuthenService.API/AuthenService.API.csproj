@@ -11,6 +11,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.13">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -21,9 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenService.Application\AuthenService.Application.csproj" />
-    <ProjectReference Include="..\AuthenService.Domain\AuthenService.Domain.csproj" />
     <ProjectReference Include="..\AuthenService.Infrastructure\AuthenService.Infrastructure.csproj" />
-    <ProjectReference Include="..\AuthenService.Shared\AuthenService.Shared.csproj" />
   </ItemGroup>
 
 </Project>

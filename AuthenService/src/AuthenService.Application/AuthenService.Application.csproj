@@ -4,12 +4,12 @@
     <PackageReference Include="BCrypt" Version="1.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AuthenService.Domain\AuthenService.Domain.csproj" />
-    <ProjectReference Include="..\AuthenService.Infrastructure\AuthenService.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

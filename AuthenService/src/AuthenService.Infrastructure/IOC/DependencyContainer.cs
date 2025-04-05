@@ -1,6 +1,12 @@
-namespace AuthenService.Infrastructure.IOC;
+// using AuthenService.Application.Services;
+// using Microsoft.Extensions.DependencyInjection;
 
-public class DependencyContainer
-{
-    
-}
+// namespace AuthenService.Infrastructure.IOC;
+
+// public class DependencyContainer
+// {
+//     public static void RegisterServices(IServiceCollection services)
+//     {
+//         services.AddScoped<AuthService>();
+//     }   
+// }

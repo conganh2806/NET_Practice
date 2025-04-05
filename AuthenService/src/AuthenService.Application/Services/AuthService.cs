@@ -3,8 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using AuthenService.Application.Models.Auth;
 using AuthenService.Domain.Entities;
-using AuthenService.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
+using AuthenService.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,18 +11,18 @@ namespace AuthenService.Application.Services;
 
 public class AuthService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IUserRepository _userRepository;
     private readonly IConfiguration _config;
 
-    public AuthService(ApplicationDbContext context, IConfiguration config)
+    public AuthService(IUserRepository userRepository, IConfiguration config)
     {
-        _context = context;
+        _userRepository = userRepository;
         _config = config;
     }
 
     public async Task<AuthResponse?> RegisterAsync(AuthRequest request)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+        if (await _userRepository.EmailExistsAsync(request.Email))
             return null;
 
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
@@ -34,15 +33,13 @@ public class AuthService
             PasswordHash = passwordHash
         };
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-
+        await _userRepository.AddUserAsync(user);
         return await GenerateTokenAsync(user);
     }
 
     public async Task<AuthResponse?> LoginAsync(AuthRequest request)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        var user = await _userRepository.GetUserByEmailAsync(request.Email);
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return null;
 
