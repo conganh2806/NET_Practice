@@ -33,6 +33,22 @@ public class UserRepository : IUserRepository
         return _context.Users.AnyAsync(u => u.Email == email);
     }
 
+    public Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+    {
+        return _context.Users.Where(u => u.RefreshToken == refreshToken).FirstOrDefaultAsync();
+    }
+
+    public async Task UpdateRefreshTokenAsync(Guid userId, string newRefreshToken, DateTime refreshTokenExpiryTime)
+    {
+        var user = _context.Users.Find(userId);
+        if (user != null)
+        {
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = refreshTokenExpiryTime;
+            await _context.SaveChangesAsync();
+        }
+    }
+
     public Task<User?> GetUserByEmailAsync(string email)
     {
         return _context.Users.FirstOrDefaultAsync(u => u.Email == email);

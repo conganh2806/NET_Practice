@@ -8,6 +8,7 @@ using AuthenService.Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AuthenService.Infrastructure.Repositories;
+using AuthenService.Infrastructure.JWT;
 
 var builder = WebApplication.CreateBuilder(args);    
 
@@ -32,6 +33,7 @@ builder.Services
     });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();

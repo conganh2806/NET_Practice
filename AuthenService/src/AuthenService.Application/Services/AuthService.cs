@@ -1,72 +1,111 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AuthenService.Application.Models.Auth;
+using AuthenService.Domain.Models.Auth;
 using AuthenService.Domain.Entities;
 using AuthenService.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenService.Application.Services;
 
 public class AuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IJwtProvider _jwtProvider;
     private readonly IConfiguration _config;
 
-    public AuthService(IUserRepository userRepository, IConfiguration config)
+    public AuthService(IUserRepository userRepository, IJwtProvider jwtProvider, IConfiguration config)
     {
         _userRepository = userRepository;
+        _jwtProvider = jwtProvider;
         _config = config;
     }
 
     public async Task<AuthResponse?> RegisterAsync(AuthRequest request)
     {
-        if (await _userRepository.EmailExistsAsync(request.Email))
-            return null;
-
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-        var user = new User
+        try 
         {
-            Email = request.Email,
-            PasswordHash = passwordHash
-        };
+            if (await _userRepository.EmailExistsAsync(request.Email)) return null;
 
-        await _userRepository.AddUserAsync(user);
-        return await GenerateTokenAsync(user);
+            string passwordHash = HashPassword(request.Password);
+
+            var user = new User
+            {
+                Email = request.Email,
+                PasswordHash = passwordHash,
+                RefreshToken = Guid.NewGuid().ToString(),
+                RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7)
+            };
+
+            await _userRepository.AddUserAsync(user);
+            return GenerateTokenAsync(user);
+        }
+        catch(Exception ex)
+        {
+            // Log exception (ex) here
+            return null;
+        }
     }
 
     public async Task<AuthResponse?> LoginAsync(AuthRequest request)
     {
-        var user = await _userRepository.GetUserByEmailAsync(request.Email);
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            return null;
+        try 
+        {
+            var user = await _userRepository.GetUserByEmailAsync(request.Email);
+            if (user == null || !PasswordMatches(request.Password, user.PasswordHash))
+                return null;
 
-        return await GenerateTokenAsync(user);
+            var response = GenerateTokenAsync(user);
+
+            user.RefreshToken = response.RefreshToken;
+            user.RefreshTokenExpiryTime = response.Expiration.AddDays(7);
+            await _userRepository.UpdateUserAsync(user);
+            
+            return response;
+        }
+        catch(Exception e)
+        {
+            return null;
+        }
     }
 
-    private async Task<AuthResponse> GenerateTokenAsync(User user)
+    public async Task<AuthResponse?> RefreshTokenAsync(string refreshToken)
     {
-        var key = Encoding.UTF8.GetBytes(_config["Jwt:Secret"]!);
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenDescriptor = new SecurityTokenDescriptor
+        try 
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
-            }),
-            Expires = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpireMinutes"]!)),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-        };
+            var user = await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+            if (user == null || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                return null;
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return new AuthResponse
+            var newRefreshToken = Guid.NewGuid().ToString();
+            var newRefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _userRepository.UpdateRefreshTokenAsync(user.Id, newRefreshToken, newRefreshTokenExpiryTime);
+
+            var accessToken = GenerateTokenAsync(user);
+            
+            return new AuthResponse
+            {
+                Token = accessToken.Token,
+                RefreshToken = newRefreshToken,
+                Expiration = newRefreshTokenExpiryTime
+            };
+        }
+        catch(Exception e)
         {
-            Token = tokenHandler.WriteToken(token),
-            RefreshToken = Guid.NewGuid().ToString(),
-            Expiration = tokenDescriptor.Expires!.Value
-        };
+            return null;
+        }
+    }
+
+    private bool PasswordMatches(string password, string hashedPassword)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+    }
+
+    private string HashPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
+
+    private AuthResponse GenerateTokenAsync(User user)
+    {
+        return  _jwtProvider.GenerateToken(user);
     }
 }

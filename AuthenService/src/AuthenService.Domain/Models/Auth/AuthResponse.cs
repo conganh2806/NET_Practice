@@ -1,4 +1,4 @@
-namespace AuthenService.Application.Models.Auth;
+namespace AuthenService.Domain.Models.Auth;
 
 public class AuthResponse
 {
