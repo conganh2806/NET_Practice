@@ -1,4 +1,4 @@
-/*Công ty ABC cần xây dựng một ứng dụng quản lý nhân sự và tính lương cho nhân viên như sau:
+﻿/*Công ty ABC cần xây dựng một ứng dụng quản lý nhân sự và tính lương cho nhân viên như sau:
 
 1. Quản lý thông tin về nhân viên : Họ tên, ngày sinh, địa chỉ.
 2. Tính tiền lương cho nhân viên.

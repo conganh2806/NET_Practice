@@ -1,4 +1,4 @@
-/*Đề số 3
+﻿/*Đề số 3
 Một Công ty bảo hiểm cần quản lý thông tin về các nhân viên cũng như các bảo hiểm mà các nhân viên bán được. Với nhân viên, cần quản lý : tên, hệ số lương, các bảo hiểm bán được. Với bảo hiểm ngắn hạn cần quản lý : tên người mua, thời hạn(mấy tháng), số tiền phải đóng. Nhân viên sẽ được hưởng tiền hoa hồng bằng 5% số tiền mà khách hàng đã đóng cho bảo hiểm ngắn hạn. Với loại bảo hiểm dài hạn cần quản lý: tên người mua, thời hạn(trên 12 tháng), số tiền phải đóng, số tiền đóng hàng tháng. Nhân viên sẽ được hưởng 50% số tiền đóng 1 tháng.
 Ngoài ra công ty quy định:
 -Thuởng 100USD cho những nhân viên bán ít nhất một bảo hiểm trên 10000USD.
