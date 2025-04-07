@@ -9,13 +9,11 @@ public class AuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
-    private readonly IConfiguration _config;
 
-    public AuthService(IUserRepository userRepository, IJwtProvider jwtProvider, IConfiguration config)
+    public AuthService(IUserRepository userRepository, IJwtProvider jwtProvider)
     {
         _userRepository = userRepository;
         _jwtProvider = jwtProvider;
-        _config = config;
     }
 
     public async Task<AuthResponse?> RegisterAsync(AuthRequest request)
