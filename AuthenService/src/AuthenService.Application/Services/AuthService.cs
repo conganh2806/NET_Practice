@@ -37,7 +37,6 @@ public class AuthService
         }
         catch(Exception ex)
         {
-            // Log exception (ex) here
             return null;
         }
     }

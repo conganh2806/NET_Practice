@@ -20,7 +20,7 @@ public class JwtProvider : IJwtProvider
 
     public AuthResponse GenerateToken(User user)
     {
-        string role = "User"; // Default role, can be changed based on your logic
+        string role = "User";
         
         var key = Encoding.UTF8.GetBytes(_config["Jwt:Secret"]!);
         var tokenHandler = new JwtSecurityTokenHandler();
