@@ -1,5 +1,4 @@
 
-using AuthenService.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using AuthenService.Infrastructure.Persistence;
@@ -9,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AuthenService.Infrastructure.Repositories;
 using AuthenService.Infrastructure.JWT;
+using AuthenService.Application.Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);    
 
@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

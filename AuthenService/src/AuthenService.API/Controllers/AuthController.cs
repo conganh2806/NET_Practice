@@ -1,6 +1,7 @@
 using AuthenService.Domain.Models.Auth;
 using AuthenService.Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using AuthenService.Application.Services.Authentication;
 
 namespace AuthenService.API.Controllers;
 
@@ -8,9 +9,9 @@ namespace AuthenService.API.Controllers;
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthService authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }
@@ -18,6 +19,8 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] AuthRequest request)
     {
+        if(ModelState.IsValid == false) 
+            return BadRequest(ModelState);
         var result = await _authService.RegisterAsync(request);
         if (result == null) return BadRequest("Email already exists.");
         return Ok(result);

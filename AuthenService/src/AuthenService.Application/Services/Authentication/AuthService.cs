@@ -1,11 +1,10 @@
 using AuthenService.Domain.Models.Auth;
 using AuthenService.Domain.Entities;
 using AuthenService.Domain.Interfaces;
-using Microsoft.Extensions.Configuration;
 
-namespace AuthenService.Application.Services;
+namespace AuthenService.Application.Services.Authentication;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IJwtProvider _jwtProvider;
@@ -16,7 +15,7 @@ public class AuthService
         _jwtProvider = jwtProvider;
     }
 
-    public async Task<AuthResponse?> RegisterAsync(AuthRequest request)
+    public async Task<AuthResponse> RegisterAsync(AuthRequest request)
     {
         try 
         {
